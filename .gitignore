@@ -1,0 +1,179 @@
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+secrets.yaml
+secrets.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+.virtualenv/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+notebooks/.ipynb_checkpoints/
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+*.code-workspace
+# Kiro
+.kiro/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Thumbnails
+Thumbs.db
+
+# Neo4j data (if running locally)
+neo4j/data/
+neo4j/logs/
+neo4j/import/
+neo4j/plugins/
+.neo4j/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.cache/
+tmp/
+temp/
+
+# Data files (large datasets, embeddings, models)
+data/raw/*.jsonl
+data/raw/*.json
+data/raw/*.csv
+data/raw/*.parquet
+!data/raw/.gitkeep
+!data/raw/abstracts_sample.jsonl
+
+data/processed/*.jsonl
+data/processed/*.json
+data/processed/*.csv
+data/processed/*.parquet
+data/processed/*.html
+data/processed/*.png
+data/processed/*.jpg
+!data/processed/.gitkeep
+
+# Exclude large downloaded datasets
+data/pubmedqa/
+data/downloads/
+data/embeddings/
+data/models/
+
+# Vector database files
+*.faiss
+*.index
+*.ann
+
+# Model checkpoints and weights
+models/
+checkpoints/
+*.pt
+*.pth
+*.h5
+*.ckpt
+*.safetensors
+
+# Logs
+logs/
+*.log
+*.out
+*.err
+
+# Test coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Documentation builds
+docs/_build/
+site/
+
+# Streamlit cache
+.streamlit/
+
+# Large evaluation results (keep summary CSVs, exclude detailed outputs)
+data/evaluation/detailed_results/
+evaluation_outputs/
+
+# Temporary graph visualizations
+*.html.tmp
+
+# Database dumps
+*.sql
+*.db
+*.sqlite
+*.sqlite3
+
+# Compressed files (unless specifically needed)
+*.zip
+*.tar.gz
+*.tar
+*.rar
+*.7z
+
+# Docker volumes and local data
+docker-compose.override.yml
+.docker/
+docker/data/
+
+# IDE-specific files
+*.sublime-project
+*.sublime-workspace
+
+# Backup files
+*.bak
+*.backup
+*~

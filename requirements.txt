@@ -1,0 +1,10 @@
+# Streamlit Cloud frontend runtime ONLY.
+# The Streamlit app (app.py -> app/main.py -> app/components/*) talks to the
+# GraphRAG backend over HTTP (POST {GRAPHRAG_API_URL}/query), so the Cloud
+# runtime needs just the UI + viz + config packages below.
+# Everything else (embeddings, torch, scispacy, GDS, LLM clients, eval)
+# stays in requirements-backend.txt for local development / the FastAPI backend.
+streamlit
+neo4j
+python-dotenv
+pyvis
