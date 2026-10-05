@@ -88,11 +88,14 @@ def derive_articles(chunks: List[dict]) -> List[dict]:
     for c in chunks:
         aid = c["article_id"]
         if aid not in seen:
-            seen[aid] = {
+            article = {
                 "article_id": aid,
                 "title": "",          # no title metadata available from the chunk file
                 "abstract_text": "",  # full text not stored; chunks carry the content
             }
+            if "pmid" in c and c["pmid"] is not None:
+                article["pmid"] = c["pmid"]
+            seen[aid] = article
     return list(seen.values())
 
 

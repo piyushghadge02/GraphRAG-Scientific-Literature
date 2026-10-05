@@ -51,6 +51,9 @@ def merge_article_chunks(article_id: str, chunks: List[dict]) -> List[dict]:
     first = dict(chunks[0])
     first["chunk_id"] = f"{article_id}_chunk_0"
     first["text"] = " ".join(c.get("text", "") for c in chunks)
+    # Preserve PMID if present
+    if "pmid" in first:
+        first["pmid"] = first["pmid"]
     return [first]
 
 
@@ -70,8 +73,9 @@ def run_strategy(
     for article in tqdm(abstracts, desc=f"  {strategy_name}", unit="article"):
         article_id = article["article_id"]
         text = article["abstract_text"]
+        pmid = article.get("pmid")
         try:
-            chunks = chunk_fn(article_id, text)
+            chunks = chunk_fn(article_id, text, pmid=pmid)
         except Exception as e:
             print(f"\n  [WARN] {strategy_name}: error on {article_id}: {e}")
             continue
@@ -82,7 +86,8 @@ def run_strategy(
             all_chunks.extend(chunks)
 
     # Write JSONL
-    with open(output_path, "w", encoding="utf-8") as f:
+    mode = "a" if OUTPUT_DIR.joinpath(f"{strategy_name}.jsonl").exists() else "w"
+    with open(output_path, mode, encoding="utf-8") as f:
         for c in all_chunks:
             f.write(json.dumps(c, ensure_ascii=False) + "\n")
 
@@ -120,6 +125,20 @@ def main() -> None:
             "chunk/article for the ≈5k-chunk submission deliverable."
         ),
     )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        metavar="N",
+        help="Process only the first N abstracts (useful for testing).",
+    )
+    parser.add_argument(
+        "--offset",
+        type=int,
+        default=0,
+        metavar="N",
+        help="Skip the first N abstracts (for batch processing).",
+    )
     args = parser.parse_args()
 
     # Resolve strategy list
@@ -135,6 +154,10 @@ def main() -> None:
     # Load abstracts (the ONLY corpus documents; PubMedQA contexts must
     # never enter the chunking pipeline as corpus documents).
     abstracts = load_abstracts()
+    if args.offset:
+        abstracts = abstracts[args.offset:]
+    if args.limit:
+        abstracts = abstracts[:args.limit]
     print(f"\nLoaded {len(abstracts)} abstracts.\n")
 
     for name in strategies:

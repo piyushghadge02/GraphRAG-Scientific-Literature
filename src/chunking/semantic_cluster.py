@@ -32,7 +32,7 @@ def _get_embedder():
     return get_embedder(get_cluster_model_name())
 
 
-def chunk(article_id: str, text: str) -> List[dict]:
+def chunk(article_id: str, text: str, pmid: int = None) -> List[dict]:
     """
     Semantically cluster sentences of *text*, then form chunks per cluster.
     """
@@ -44,12 +44,15 @@ def chunk(article_id: str, text: str) -> List[dict]:
 
     # Too few sentences to cluster meaningfully — treat whole abstract as one chunk
     if len(sentences) < 3:
-        return [{
+        chunk_dict = {
             "article_id": article_id,
             "chunk_id": f"{article_id}_chunk_0",
             "text": " ".join(sentences),
             "strategy": "semantic_cluster",
-        }]
+        }
+        if pmid is not None:
+            chunk_dict["pmid"] = pmid
+        return [chunk_dict]
 
     # Embed every sentence
     embedder = _get_embedder()
@@ -76,20 +79,26 @@ def chunk(article_id: str, text: str) -> List[dict]:
     for _label in sorted(cluster_groups, key=lambda l: cluster_groups[l][0]):
         indices = cluster_groups[_label]
         grouped_text = " ".join(sentences[i] for i in indices)
-        chunks.append({
+        chunk_dict = {
             "article_id": article_id,
             "chunk_id": f"{article_id}_chunk_{len(chunks)}",
             "text": grouped_text,
             "strategy": "semantic_cluster",
-        })
+        }
+        if pmid is not None:
+            chunk_dict["pmid"] = pmid
+        chunks.append(chunk_dict)
 
     # Emit noise sentences as singleton chunks
     for idx in noise_indices:
-        chunks.append({
+        chunk_dict = {
             "article_id": article_id,
             "chunk_id": f"{article_id}_chunk_{len(chunks)}",
             "text": sentences[idx],
             "strategy": "semantic_cluster",
-        })
+        }
+        if pmid is not None:
+            chunk_dict["pmid"] = pmid
+        chunks.append(chunk_dict)
 
     return chunks

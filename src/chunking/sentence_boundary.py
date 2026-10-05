@@ -24,7 +24,7 @@ def _token_count(text: str) -> int:
     return len(ENCODING.encode(text))
 
 
-def chunk(article_id: str, text: str) -> List[dict]:
+def chunk(article_id: str, text: str, pmid: int = None) -> List[dict]:
     """
     Greedily merge consecutive sentences up to TOKEN_LIMIT tokens per chunk.
     """
@@ -43,12 +43,15 @@ def chunk(article_id: str, text: str) -> List[dict]:
 
         if current_sentences and current_tokens + sent_tokens > TOKEN_LIMIT:
             # Flush the accumulated chunk
-            chunks.append({
+            chunk_dict = {
                 "article_id": article_id,
                 "chunk_id": f"{article_id}_chunk_{len(chunks)}",
                 "text": " ".join(current_sentences),
                 "strategy": "sentence_boundary",
-            })
+            }
+            if pmid is not None:
+                chunk_dict["pmid"] = pmid
+            chunks.append(chunk_dict)
             current_sentences = []
             current_tokens = 0
 
@@ -57,11 +60,14 @@ def chunk(article_id: str, text: str) -> List[dict]:
 
     # Flush remaining sentences
     if current_sentences:
-        chunks.append({
+        chunk_dict = {
             "article_id": article_id,
             "chunk_id": f"{article_id}_chunk_{len(chunks)}",
             "text": " ".join(current_sentences),
             "strategy": "sentence_boundary",
-        })
+        }
+        if pmid is not None:
+            chunk_dict["pmid"] = pmid
+        chunks.append(chunk_dict)
 
     return chunks

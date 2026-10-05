@@ -52,9 +52,11 @@ def insert_articles(driver, articles: List[dict]) -> None:
     UNWIND $batch AS art
     MERGE (a:Article {article_id: art.article_id})
     ON CREATE SET a.title = art.title,
-                  a.abstract_text = art.abstract_text
+                  a.abstract_text = art.abstract_text,
+                  a.pmid = art.pmid
     ON MATCH SET a.title = art.title,
-                 a.abstract_text = art.abstract_text
+                 a.abstract_text = art.abstract_text,
+                 a.pmid = art.pmid
     """
     total = len(articles)
     print(f"[batch_insert] Inserting {total} Article nodes ...")
